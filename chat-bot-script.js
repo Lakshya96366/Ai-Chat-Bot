@@ -24,6 +24,7 @@ Language: Detect and respond in the user’s input language.
 Greetings: Keep brief and friendly (e.g., “Hi! How can I help with your farm query today?”).
 Non-Agricultural Questions: Politely decline: “I specialize in agriculture to ensure accurate help. Ask me about crops, soil, farming tools, or related topics!”`;
 
+let conversationHistory = [];
 let isBotTyping = false;
 
 // Function to show typing indicator
@@ -69,6 +70,9 @@ function hideTypingIndicator() {
 async function generateResponse(userMessage) {
     const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
 
+    // Add user message to history
+    conversationHistory.push({ role: 'user', parts: [{ text: userMessage }] });
+
     try {
         const response = await fetch(`${url}?key=${API_KEY}`, {
             method: 'POST',
@@ -76,16 +80,18 @@ async function generateResponse(userMessage) {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                contents: [{
-                    parts: [{
-                        text: `${SYSTEM_PROMPT}\n\nUser: ${userMessage}\nAssistant:`
-                    }]
-                }]
+                contents: [
+                    { role: 'user', parts: [{ text: SYSTEM_PROMPT }] },
+                    ...conversationHistory
+                ]
             })
         });
 
         const data = await response.json();
         let botResponse = data.candidates[0]?.content?.parts[0]?.text || "Sorry, I couldn't generate a response.";
+
+        // Add assistant response to history
+        conversationHistory.push({ role: 'model', parts: [{ text: botResponse }] });
 
         return formatResponse(botResponse);
     } catch (error) {
@@ -96,25 +102,13 @@ async function generateResponse(userMessage) {
 
 // Function to format bot response
 function formatResponse(text) {
-    // Bold only important headings or points (e.g., text wrapped in **)
     text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-
-    // Format numbered lists (e.g., 1., 2., 3.)
     text = text.replace(/(\d+\.)\s+(.+)/g, '<br>$1 <strong>$2</strong>');
-
-    // Format bullet points (e.g., *, •)
     text = text.replace(/(\*|•)\s+(.+)/g, '<br>• $2');
-
-    // Add paragraph breaks for double newlines
     text = text.replace(/\n\n/g, '</p><p>');
-
-    // Ensure single newlines are treated as line breaks
     text = text.replace(/\n/g, '<br>');
-
     return `<p>${text}</p>`;
 }
-
-
 
 // Function to add messages to chat window
 function addMessage(message, isUser = false, isHTML = false) {
@@ -139,7 +133,7 @@ function addMessage(message, isUser = false, isHTML = false) {
 // Function to display the initial message on page load
 function displayInitialMessage() {
     const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = ''; // Clear previous messages
+    chatMessages.innerHTML = '';
 
     addMessage(
         "<p>👋 Hello! I'm your <strong>AgriAI Assistant</strong>. 🌱 I can help with problems like:</p>" +
@@ -162,9 +156,10 @@ function displayInitialMessage() {
 // Function to reset the chat and display the initial message
 function resetChat() {
     const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = ''; // Clear all messages
-    displayInitialMessage(); // Display the initial message again
+    chatMessages.innerHTML = '';
+    displayInitialMessage();
     isBotTyping = false;
+    conversationHistory = [];
 }
 
 // Function to send user message
@@ -183,7 +178,7 @@ async function sendMessage() {
     addMessage(response, false, true);
 }
 
-// Event listeners for sending messages
+// Event listeners
 document.getElementById('userInput').addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         sendMessage();
@@ -192,13 +187,11 @@ document.getElementById('userInput').addEventListener('keypress', (e) => {
 document.getElementById('sendButton').addEventListener('click', () => {
     sendMessage();
 });
-
-// Event listener for reset button
 document.getElementById('clearButton').addEventListener('click', () => {
     resetChat();
 });
 
-// Display the initial message when the page loads
+// Initialize chat
 window.onload = () => {
     displayInitialMessage();
 };
