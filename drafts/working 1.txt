@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriAI Assistant</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .chat-container {
+            background-color: #252525;
+            border-radius: 12px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background-color: #303030;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .chat-header h1 {
+            color: #00ff88;
+            font-size: 1.5rem;
+        }
+
+        .clear-btn {
+            background-color: #ff4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .message {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .user-message {
+            flex-direction: row-reverse;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+        }
+
+        .bot-avatar {
+            background-color: #00ff88;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .user-avatar {
+            background-color: #4285f4;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .message-content {
+            max-width: 70%;
+            padding: 12px 16px;
+            border-radius: 8px;
+        }
+
+        .bot-message .message-content {
+            background-color: #303030;
+            border: 1px solid #404040;
+        }
+
+        .user-message .message-content {
+            background-color: #1a73e8;
+            color: white;
+        }
+
+        .input-container {
+            padding: 20px;
+            background-color: #303030;
+            display: flex;
+            gap: 10px;
+        }
+
+        .user-input {
+            flex-grow: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: none;
+            background-color: #404040;
+            color: white;
+        }
+
+        .send-btn {
+            background-color: #00ff88;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="chat-container">
+            <div class="chat-header">
+                <h1>AgriAI Assistant</h1>
+                <button class="clear-btn" onclick="clearChat()">Clear Chat</button>
+            </div>
+            <div class="chat-messages" id="chatMessages"></div>
+            <div class="input-container">
+                <input type="text" class="user-input" id="userInput" placeholder="Type your message...">
+                <button class="send-btn" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = 'AIzaSyAToUy60RXVyR-mDVtUZqMAu3beoanKCP0';
+        const SYSTEM_PROMPT = "You are an agricultural AI assistant. Your primary focus is on providing information about agriculture, farming, seeds, crop protection, and related topics. For general conversation (like greetings), keep responses brief and friendly. For non-agricultural questions, politely explain that you specialize in agriculture-related topics. Detect and respond in the same language as the user's input.";
+
+        async function generateResponse(userMessage) {
+            const url = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
+
+            try {
+                const response = await fetch(`${url}?key=${API_KEY}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `${SYSTEM_PROMPT}\n\nUser: ${userMessage}\nAssistant:`
+                            }]
+                        }]
+                    })
+                });
+
+                const data = await response.json();
+                return data.candidates[0].content.parts[0].text;
+            } catch (error) {
+                console.error('Error:', error);
+                return "Sorry, I'm having trouble responding right now. Please try again later.";
+            }
+        }
+
+        function addMessage(message, isUser = false) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = `avatar ${isUser ? 'user-avatar' : 'bot-avatar'}`;
+            avatar.innerHTML = isUser ? '👤' : '🌱';
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.textContent = message;
+
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(content);
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        async function sendMessage() {
+            const userInput = document.getElementById('userInput');
+            const message = userInput.value.trim();
+
+            if (!message) return;
+
+            addMessage(message, true);
+            userInput.value = '';
+
+            const response = await generateResponse(message);
+            addMessage(response);
+        }
+
+        function clearChat() {
+            document.getElementById('chatMessages').innerHTML = '';
+        }
+
+        // Handle Enter key
+        document.getElementById('userInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+
+</html>

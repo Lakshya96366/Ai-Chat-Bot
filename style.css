@@ -1,0 +1,162 @@
+ * {
+     margin: 0;
+     padding: 0;
+     box-sizing: border-box;
+     font-family: 'Segoe UI', sans-serif;
+ }
+
+ body {
+     background-color: #1a1a1a;
+     color: #ffffff;
+ }
+
+ .container {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 20px;
+ }
+
+ .chat-container {
+     background-color: #252525;
+     border-radius: 12px;
+     height: 80vh;
+     display: flex;
+     flex-direction: column;
+     overflow: hidden;
+ }
+
+ .chat-header {
+     background-color: #303030;
+     padding: 15px;
+     display: flex;
+     align-items: center;
+     justify-content: space-between;
+ }
+
+ .chat-header h1 {
+     color: #00ff88;
+     font-size: 1.5rem;
+ }
+
+ .clear-btn {
+     background-color: #ff4444;
+     color: white;
+     border: none;
+     padding: 8px 16px;
+     border-radius: 5px;
+     cursor: pointer;
+ }
+
+ .chat-messages {
+     flex-grow: 1;
+     padding: 20px;
+     overflow-y: auto;
+ }
+
+ .message {
+     display: flex;
+     gap: 15px;
+     margin-bottom: 20px;
+ }
+
+ .user-message {
+     flex-direction: row-reverse;
+ }
+
+ .avatar {
+     width: 40px;
+     height: 40px;
+     border-radius: 50%;
+ }
+
+ .bot-avatar {
+     background-color: #00ff88;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .user-avatar {
+     background-color: #4285f4;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+ }
+
+ .message-content {
+     max-width: 70%;
+     padding: 12px 16px;
+     border-radius: 8px;
+ }
+
+ .bot-message .message-content {
+     background-color: #303030;
+     border: 1px solid #404040;
+ }
+
+ .user-message .message-content {
+     background-color: #1a73e8;
+     color: white;
+ }
+
+ .input-container {
+     padding: 20px;
+     background-color: #303030;
+     display: flex;
+     gap: 10px;
+ }
+
+ .user-input {
+     flex-grow: 1;
+     padding: 12px;
+     border-radius: 8px;
+     border: none;
+     background-color: #404040;
+     color: white;
+ }
+
+ .send-btn {
+     background-color: #00ff88;
+     color: #1a1a1a;
+     border: none;
+     padding: 12px 24px;
+     border-radius: 8px;
+     cursor: pointer;
+     font-weight: bold;
+ }
+
+ /* New typing animation CSS */
+ .typing-indicator {
+     display: inline-flex;
+     gap: 4px;
+     padding: 8px;
+ }
+
+ .typing-dot {
+     width: 6px;
+     height: 6px;
+     background-color: #ffffff;
+     border-radius: 50%;
+     animation: typing 1.4s infinite ease-in-out;
+ }
+
+ .typing-dot:nth-child(2) {
+     animation-delay: 0.2s;
+ }
+
+ .typing-dot:nth-child(3) {
+     animation-delay: 0.4s;
+ }
+
+ @keyframes typing {
+
+     0%,
+     40%,
+     100% {
+         transform: translateY(0);
+     }
+
+     20% {
+         transform: translateY(-6px);
+     }
+ }
