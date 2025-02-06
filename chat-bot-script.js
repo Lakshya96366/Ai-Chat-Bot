@@ -142,14 +142,14 @@ function displayInitialMessage() {
     chatMessages.innerHTML = ''; // Clear previous messages
 
     addMessage(
-        "<p>👋 Hello! I'm your <strong>AgriAI Assistant</strong>. 🌱 I can help with:</p>" +
-        "<p><strong>1.</strong> Crop rotation<br>" +
+        "<p>👋 Hello! I'm your <strong>AgriAI Assistant</strong>. 🌱 I can help with problems like:</p>" +
+        "<p><strong>1.</strong> Farming Practices <br>" +
         "<strong>2.</strong> Pest control<br>" +
         "<strong>3.</strong> Soil health<br>" +
         "<strong>4.</strong> Farming techniques<br>" +
         "<strong>5.</strong> Seed selection</p>" +
         "<br>" +
-        "<p><strong>Ask me a question:</strong></p>" +
+        "<p><strong>Ask me a questions like:</strong></p>" +
         "<p>• What are the benefits of crop rotation?</p>" +
         "<p>• How can I prevent pests from attacking my crops?</p>" +
         "<p>• What is the ideal soil pH for growing vegetables?</p>" +
