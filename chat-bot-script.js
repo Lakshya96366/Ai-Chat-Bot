@@ -73,13 +73,25 @@ async function generateResponse(userMessage) {
 
 // Function to format bot response
 function formatResponse(text) {
-    text = text.replace(/\n\* (.+)/g, '<br>• $1'); // Bullet points
-    text = text.replace(/\n(\d+\.) (.+)/g, '<br>$1 <strong>$2</strong>'); // Numbered lists
-    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>'); // Bold text
-    text = text.replace(/\n\n/g, '</p><p>'); // Paragraph breaks
+    // Bold only important headings or points (e.g., text wrapped in **)
+    text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+
+    // Format numbered lists (e.g., 1., 2., 3.)
+    text = text.replace(/(\d+\.)\s+(.+)/g, '<br>$1 <strong>$2</strong>');
+
+    // Format bullet points (e.g., *, •)
+    text = text.replace(/(\*|•)\s+(.+)/g, '<br>• $2');
+
+    // Add paragraph breaks for double newlines
+    text = text.replace(/\n\n/g, '</p><p>');
+
+    // Ensure single newlines are treated as line breaks
+    text = text.replace(/\n/g, '<br>');
 
     return `<p>${text}</p>`;
 }
+
+
 
 // Function to add messages to chat window
 function addMessage(message, isUser = false, isHTML = false) {
