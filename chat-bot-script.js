@@ -24,7 +24,7 @@ Language: Detect and respond in the user’s input language.
 Greetings: Keep brief and friendly (e.g., “Hi! How can I help with your farm query today?”).
 
 
-Very politly decline the Non-Agricultural Questions: Politely decline: “I specialize in agriculture to ensure accurate help. Ask me about crops, soil, farming tools, or related topics!”`;
+4. Very politly decline the Non-Agricultural Questions: “I am sorry, I specialize in agriculture to ensure accurate help. Ask me about crops, soil, farming tools, or related topics!” `;
 
 let conversationHistory = [];
 let isBotTyping = false;
